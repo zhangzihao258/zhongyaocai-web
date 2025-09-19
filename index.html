@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中药材识别与渠道导航平台</title>
+    <!-- 引入 Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1f5b10;
+            --primary-light: #2a7d18;
+            --primary-dark: #16440b;
+            --secondary-color: #d97706;
+            --secondary-light: #fbbf24;
+            --secondary-dark: #b45309;
+            --text-color: #333;
+            --text-light: #666;
+            --text-white: #fff;
+            --light-bg: #f8f9fa;
+            --card-bg: #fff;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s ease;
+            --border-radius: 10px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* 顶部导航栏 */
+        header {
+            background-color: var(--primary-color);
+            color: var(--text-white);
+            padding: 15px 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: var(--secondary-color);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .lang-switch {
+            background-color: var(--text-white);
+            color: var(--primary-color);
+            border: none;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .lang-switch:hover {
+            background-color: var(--secondary-light);
+            color: var(--text-white);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 首页样式 */
+        .home-section {
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .hero-banner {
+            background: linear-gradient(rgba(31, 91, 16, 0.8), rgba(31, 91, 16, 0.9)), url('https://picsum.photos/id/18/1200/400');
+            background-size: cover;
+            background-position: center;
+            color: var(--text-white);
+            padding: 80px 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /*        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path fill="rgba(255,255,255,0.05)" d="M50 0 L100 50 L50 100 L0 50 Z"></path></svg>');
+            opacity: 0.5;
+        } */
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-banner h1 {
+            font-size: 40px;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-banner p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            background-color: var(--secondary-color);
+            color: var(--text-white);
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            background-color: var(--secondary-light);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+        }
+
+        .intro-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            box-shadow: var(--shadow);
+            max-width: 800px;
+            margin: 0 auto 40px;
+            border-top: 5px solid var(--secondary-color);
+        }
+
+        .intro-card h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 28px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .intro-card h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--secondary-color);
+        }
+
+        .intro-card p {
+            font-size: 18px;
+            color: var(--text-light);
+            margin-bottom: 25px;
+            line-height: 1.8;
+        }
+
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .option-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            width: 320px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .option-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .option-card:hover::before {
+            height: 100%;
+            opacity: 0.05;
+        }
+
+        .option-icon {
+            font-size: 50px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+
+        .option-card:hover .option-icon {
+            color: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        .option-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .option-card p {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: var(--text-white);
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: auto;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-dark);
+            transform: scale(1.05);
+        }
+
+        /* 表单区域样式 */
+        .form-section {
+            padding: 60px 0;
+            background-color: var(--card-bg);
+            margin-top: 50px;
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--light-bg);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            box-shadow: var(--shadow);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header h2 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .form-header p {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(31, 91, 16, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: var(--text-white);
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(31, 91, 16, 0.2);
+        }
+
+        .success-message {
+            display: none;
+            background-color: #d1e7dd;
+            color: #0f5132;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* 工具页面样式 */
+        .tools-section {
+            padding: 60px 0;
+            display: none;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 32px;
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background-color: var(--secondary-color);
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        .tools {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .tool-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .tool-icon {
+            background-color: var(--primary-color);
+            color: var(--text-white);
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-icon::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0, 0, 0, 0.1), transparent);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .tool-card:hover .tool-icon::after {
+            opacity: 1;
+        }
+
+        .tool-icon i {
+            font-size: 48px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tool-info {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .tool-info h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--text-color);
+            text-align: center;
+        }
+
+        .tool-info p {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .tool-info a {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: var(--text-white);
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: var(--transition);
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .tool-info a:hover {
+            background-color: var(--secondary-dark);
+            transform: scale(1.05);
+        }
+
+        /* 渠道页面样式 */
+        .channels-section {
+            padding: 60px 0;
+            display: none;
+        }
+
+        .channel-filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background-color: var(--card-bg);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+        }
+
+        .filter-btn.active {
+            background-color: var(--primary-color);
+            color: var(--text-white);
+        }
+
+        .filter-btn:hover:not(.active) {
+            background-color: rgba(31, 91, 16, 0.05);
+        }
+
+        .channel-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .channel-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 800px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .channel-card:hover {
+            box-shadow: var(--hover-shadow);
+            transform: translateX(5px);
+        }
+
+        .channel-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .channel-card h3 i {
+            margin-right: 10px;
+            color: var(--secondary-color);
+        }
+
+        .contact-list {
+            list-style: none;
+        }
+
+        .contact-item {
+            background-color: #f1f8f4;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+        }
+
+        .contact-item:hover {
+            transform: translateX(5px);
+            border-left-color: var(--secondary-color);
+        }
+
+        .contact-item h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .contact-item p {
+            margin: 8px 0;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .contact-item p i {
+            width: 20px;
+            color: var(--primary-color);
+            margin-right: 10px;
+        }
+
+        .contact-item a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        .contact-item a:hover {
+            text-decoration: underline;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin: 20px 0;
+            background-color: #6c757d;
+        }
+
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .producer-note {
+            background-color: #fff8e6;
+            border-left: 4px solid var(--secondary-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        /* 匹配结果样式 */
+        .match-result {
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: var(--shadow);
+            border-top: 5px solid var(--secondary-color);
+            display: none;
+        }
+
+        .match-result h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 22px;
+            text-align: center;
+        }
+
+        .match-result p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .match-company {
+            background-color: #e8f5e9;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .match-company h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .match-score {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        /* 页脚样式 */
+        footer {
+            text-align: center;
+            padding: 50px 0 30px;
+            margin-top: 60px;
+            background-color: var(--primary-dark);
+            color: var(--text-white);
+            position: relative;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .footer-copyright {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 20px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .hero-banner h1 {
+                font-size: 32px;
+            }
+
+            .tools {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            .section-title {
+                font-size: 26px;
+            }
+
+            .intro-card {
+                padding: 25px;
+            }
+
+            .intro-card h2 {
+                font-size: 24px;
+            }
+
+            .form-container {
+                padding: 25px;
+            }
+
+            .channel-card {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 20px;
+            }
+
+            .hero-banner {
+                padding: 60px 20px;
+            }
+
+            .hero-banner h1 {
+                font-size: 26px;
+            }
+
+            .hero-banner p {
+                font-size: 16px;
+            }
+
+            .tools {
+                grid-template-columns: 1fr;
+            }
+
+            .options {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .option-card {
+                width: 100%;
+                max-width: 320px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+                <span id="header-title">中药材识别与渠道导航平台</span>
+            </div>
+            <button id="lang-switch" class="lang-switch">En</button>
+        </div>
+    </header>
+
+    <!-- 首页介绍部分 -->
+    <section class="home-section" id="home" style="display: block;">
+        <div class="container">
+            <!-- 新增的横幅区域 -->
+            <div class="hero-banner">
+                <div class="hero-content">
+                    <h1 id="hero-title">连接中药材产业的供需桥梁</h1>
+                    <p id="hero-desc">专业的识别工具与精准的渠道对接，助力中医药产业高质量发展</p>
+                    <a href="#form-section" class="cta-button" id="hero-button">立即加入平台</a>
+                </div>
+            </div>
+
+            <div class="intro-card">
+                <h2 id="home-h2">平台介绍</h2>
+                <p id="home-p1">这是一个专为中药材生产者打造的综合性服务平台。我们致力于解决中药材产业中的识别难题与供需对接问题，为行业参与者提供便捷、高效的工具与资源。</p>
+                <p id="home-p2">平台整合了专业的中药材识别工具，帮助您快速准确地鉴别各类中药材；同时搭建了生产者与收购者之间的沟通桥梁，促进优质中药材的流通与交易，助力中医药产业的发展。</p>
+            </div>
+
+            <div class="options">
+                <div class="option-card" onclick="showSection('tools')">
+                    <div class="option-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 id="option1-h3">中药材识别</h3>
+                    <p id="option1-p">提供多种专业的植物识别工具，有助于快速鉴别中药材品种，了解中药材的特性与价值，区分杂草等。</p>
+                    <button class="btn" id="option1-btn">开始识别</button>
+                </div>
+
+                <div class="option-card" onclick="showSection('channels')">
+                    <div class="option-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3 id="option2-h3">渠道对接</h3>
+                    <p id="option2-p">收集了宕昌县中药材生产者与大型中药材收购者的相关资料，提供对接渠道，促进供需双方的有效沟通与合作，实现共赢发展。</p>
+                    <button class="btn" id="option2-btn">查看渠道</button>
+                </div>
+            </div>
+
+            <!-- 表单区域 -->
+            <section class="form-section" id="form-section">
+                <div class="container">
+                    <div class="form-container">
+                        <div class="form-header">
+                            <h2 id="form-title">信息登记与匹配</h2>
+                            <p id="form-subtitle">填写您的信息，我们将为您匹配最合适的收购方</p>
+                        </div>
+
+                        <!-- 生产者表单 -->
+                        <div class="form-content active" id="producer-form">
+                            <div class="success-message" id="producer-success">
+                                <i class="fas fa-check-circle"></i> 信息提交成功！我们将尽快为您匹配合适的收购方。
+                            </div>
+                            <form id="producer-form-element">
+                                <div class="form-group">
+                                    <label for="producer-name" id="label-producer-name">姓名</label>
+                                    <input type="text" id="producer-name" class="form-control" placeholder="请输入您的姓名"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="producer-phone" id="label-producer-phone">联系电话</label>
+                                    <input type="tel" id="producer-phone" class="form-control" placeholder="请输入您的联系电话"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="producer-location" id="label-producer-location">种植地点</label>
+                                    <input type="text" id="producer-location" class="form-control"
+                                        placeholder="请输入您的种植地点" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="producer-crops" id="label-producer-crops">种植品种</label>
+                                    <input type="text" id="producer-crops" class="form-control"
+                                        placeholder="请输入您种植的中药材品种，多个品种用逗号分隔" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="producer-quantity" id="label-producer-quantity">预计产量</label>
+                                    <input type="text" id="producer-quantity" class="form-control"
+                                        placeholder="请输入预计产量及单位" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="producer-harvest" id="label-producer-harvest">预计收获时间</label>
+                                    <input type="date" id="producer-harvest" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="producer-notes" id="label-producer-notes">其他说明</label>
+                                    <textarea id="producer-notes" class="form-control"
+                                        placeholder="请输入您的其他需求或说明"></textarea>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="submit-btn" id="producer-submit">提交信息</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <!-- 中药材识别工具部分 -->
+    <section class="tools-section" id="tools" style="display: none;">
+        <div class="container">
+            <button class="btn back-btn" onclick="showSection('home')"><i class="fas fa-arrow-left"></i> <span
+                    id="tools-back">返回首页</span></button>
+            <h2 class="section-title" id="tools-title">中药材识别工具</h2>
+            <div class="tools">
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <div class="tool-info">
+                        <h3 id="tool1-title">Free Plant Identifier App</h3>
+                        <p id="tool1-desc">Free plant identifier app powered by AI technology. Identify plants instantly
+                            by uploading photos. The best plant identifier for accurate plant recognition.</p>
+                        <a href="https://plantappidentifier.com" target="_blank" id="tool1-link">前往识别</a>
+                    </div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <div class="tool-info">
+                        <h3 id="tool2-title">Pl@ntNet</h3>
+                        <p id="tool2-desc">Pl@ntNet is a citizen science project available as an app that helps you
+                            identify plants thanks to your pictures.</p>
+                        <a href="https://identify.plantnet.org/k-world-flora/identify" target="_blank"
+                            id="tool2-link">前往识别</a>
+                    </div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div class="tool-info">
+                        <h3 id="tool3-title">PictureThis</h3>
+                        <p id="tool3-desc">Simply upload a photo to identify flowers, trees, fruits, houseplants,
+                            foliage plants, herbs, and vegetables online, and level up your plant knowledge!</p>
+                        <a href="https://www.picturethisai.com/identify" target="_blank" id="tool3-link">前往识别</a>
+                    </div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-tree"></i>
+                    </div>
+                    <div class="tool-info">
+                        <h3 id="tool4-title">iPlant - FlowerMate 2.0</h3>
+                        <p id="tool4-desc">基于中国植物物种信息系统，利用人工智能识别中国植物。</p>
+                        <a href="https://www.iplant.cn/stu/20k" target="_blank" id="tool4-link">前往识别</a>
+                    </div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="tool-info">
+                        <h3 id="tool5-title">BaiduAI - EasyDL</h3>
+                        <p id="tool5-desc">通过EasyDL定制图像分类、物体检测模型，自定义识别标签，实现定制植物识别功能。</p>
+                        <a href="https://ai.baidu.com/tech/imagerecognition/plant" target="_blank"
+                            id="tool5-link">前往定制</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 渠道对接部分 -->
+    <section class="channels-section" id="channels" style="display: none;">
+        <div class="container">
+            <button class="btn back-btn" onclick="showSection('home')"><i class="fas fa-arrow-left"></i> <span
+                    id="channels-back">返回首页</span></button>
+            <h2 class="section-title" id="channels-title">中药材渠道对接</h2>
+
+            <!-- 筛选按钮 -->
+            <div class="channel-filters">
+                <button class="filter-btn active" data-filter="all" id="filter-all">全部</button>
+                <button class="filter-btn" data-filter="large" id="filter-large">大型企业</button>
+                <button class="filter-btn" data-filter="local" id="filter-local">本地收购商</button>
+                <button class="filter-btn" data-filter="pharmacy" id="filter-pharmacy">制药企业</button>
+            </div>
+
+            <!-- 匹配结果区域 -->
+            <div class="match-result" id="match-result">
+                <h3>为您找到的匹配公司</h3>
+                <p>根据您提交的信息，我们为您找到了以下可能合适的收购公司：</p>
+                <div id="matched-companies">
+                    <!-- 这里会动态填充匹配的公司 -->
+                </div>
+                <p>您也可以查看下方的完整公司列表，了解更多选择。</p>
+            </div>
+
+            <div class="channel-options">
+                <div class="channel-card" data-category="large pharmacy">
+                    <h3><i class="fas fa-hand-holding-seed"></i> <span id="channel-card-h3">中药材收购公司对接渠道</span></h3>
+                    <p id="channel-p1">以下是主要的中药材收购公司及联系方式，供生产者参考对接：</p>
+
+                    <div class="producer-note">
+                        <p id="producer-note"><strong>温馨提示：</strong>作为中药材生产者，您可以联系以下公司洽谈合作事宜。建议提前准备好样品和相关资质证明。</p>
+                    </div>
+
+                    <ul class="contact-list">
+                        <li class="contact-item">
+                            <h4 id="company1">中国中药材集团有限公司</h4>
+                            <p><i class="fas fa-map-marker-alt"></i> <span
+                                    id="company1-address">地址：北京市西城区宣武门外大街甲1号</span></p>
+                            <p><i class="fas fa-phone"></i> <span id="company1-phone">电话：010-12345678</span></p>
+                            <p><i class="fas fa-globe"></i> <span id="company1-site">官网：<a
+                                        href="https://www.sinopharm.com" target="_blank">www.sinopharm.com</a></span>
+                            </p>
+                            <p><i class="fas fa-box"></i> <span id="company1-products">主要收购：各类常用中药材</span></p>
+                            <p><i class="fas fa-user"></i> <span id="company1-contact">对接联系人：采购部张经理</span></p>
+                        </li>
+                        <li class="contact-item">
+                            <h4 id="company2">同仁堂药材收购中心</h4>
+                            <p><i class="fas fa-map-marker-alt"></i> <span id="company2-address">地址：北京市东城区东单北大街4号</span>
+                            </p>
+                            <p><i class="fas fa-phone"></i> <span id="company2-phone">电话：010-87654321</span></p>
+                            <p><i class="fas fa-globe"></i> <span id="company2-site">官网：<a
+                                        href="https://www.tongrentang.com"
+                                        target="_blank">www.tongrentang.com</a></span></p>
+                            <p><i class="fas fa-box"></i> <span id="company2-products">主要收购：高品质道地中药材</span></p>
+                            <p><i class="fas fa-user"></i> <span id="company2-contact">对接联系人：原料采购部李主任</span></p>
+                        </li>
+                        <li class="contact-item">
+                            <h4 id="company3">康美药业中药材采购部</h4>
+                            <p><i class="fas fa-map-marker-alt"></i> <span id="company3-address">地址：广东省普宁市流沙揭神路东侧</span>
+                            </p>
+                            <p><i class="fas fa-phone"></i> <span id="company3-phone">电话：0663-2912345</span></p>
+                            <p><i class="fas fa-globe"></i> <span id="company3-site">官网：<a
+                                        href="https://www.kangmei.com" target="_blank">www.kangmei.com</a></span></p>
+                            <p><i class="fas fa-box"></i> <span id="company3-products">主要收购：大宗中药材、特色药材</span></p>
+                            <p><i class="fas fa-user"></i> <span id="company3-contact">对接联系人：采购中心王总监</span></p>
+                        </li>
+                        <li class="contact-item">
+                            <h4 id="company4">宕昌县本地收购点</h4>
+                            <p><i class="fas fa-map-marker-alt"></i> <span id="company4-address">地址：甘肃省陇南市宕昌县</span>
+                            </p>
+                            <p><i class="fas fa-phone"></i> <span id="company4-phone">电话：0939-1234567</span></p>
+                            <p><i class="fas fa-box"></i> <span id="company4-products">主要收购：当归、黄芪、党参等本地药材</span></p>
+                            <p><i class="fas fa-user"></i> <span id="company4-contact">对接联系人：王老板</span></p>
+                        </li>
+                        <li class="contact-item">
+                            <h4 id="company5">甘肃中药材交易中心</h4>
+                            <p><i class="fas fa-map-marker-alt"></i> <span id="company5-address">地址：甘肃省兰州市城关区</span>
+                            </p>
+                            <p><i class="fas fa-phone"></i> <span id="company5-phone">电话：0931-7654321</span></p>
+                            <p><i class="fas fa-globe"></i> <span id="company5-site">官网：<a href="https://www.gszyc.com"
+                                        target="_blank">www.gszyc.com</a></span></p>
+                            <p><i class="fas fa-box"></i> <span id="company5-products">主要收购：甘肃道地药材、大宗交易</span></p>
+                            <p><i class="fas fa-user"></i> <span id="company5-contact">对接联系人：交易部刘经理</span></p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <!-- 上海科技大学 logo -->
+                <div class="footer-logo">
+                    <a href="https://www.shanghaitech.edu.cn/" target="_blank">
+                        <img src="https://www.shanghaitech.edu.cn/_upload/tpl/00/20/32/template32/images/logo_red.svg"
+                            alt="STU" width="250" loading="lazy"
+                            style="display: inline-block; vertical-align: middle;filter: invert(1) brightness(1.5) contrast(10);">
+                    </a>
+                </div>
+                <!-- 本地 SVG -->
+                <div class="footer-logo">
+                    <img src="4.svg" alt="Local Logo" width="75" loading="lazy"
+                        style="display: inline-block; vertical-align: middle;filter: invert(1) brightness(10) contrast(20);">
+                </div>
+            </div>
+            <p class="d-block"><small id="footer-copyright">Copyright © 2025 上海科技大学甘肃陇南社会实践团队</small></p>
+        </div>
+    </footer>
+
+    <script>
+        // 多语言支持
+        const langTexts = {
+            zh: {
+                "header-title": "中药材识别与渠道导航平台",
+                "hero-title": "连接中药材产业的供需桥梁",
+                "hero-desc": "专业的识别工具与精准的渠道对接，助力中医药产业高质量发展",
+                "hero-button": "立即加入平台",
+                "home-h2": "平台介绍",
+                "home-p1": "这是一个专为中药材生产者打造的综合性服务平台。我们致力于解决中药材产业中的识别难题与供需对接问题，为行业参与者提供便捷、高效的工具与资源。",
+                "home-p2": "平台整合了专业的中药材识别工具，帮助您快速准确地鉴别各类中药材；同时搭建了生产者与收购者之间的沟通桥梁，促进优质中药材的流通与交易，助力中医药产业的发展。",
+                "option1-h3": "中药材识别",
+                "option1-p": "提供多种专业的植物识别工具，有助于快速鉴别中药材品种，了解中药材的特性与价值，区分杂草等。",
+                "option1-btn": "开始识别",
+                "option2-h3": "渠道对接",
+                "option2-p": "收集了宕昌县中药材生产者与大型中药材收购者的相关资料，提供对接渠道，促进供需双方的有效沟通与合作，实现共赢发展。",
+                "option2-btn": "查看渠道",
+                "form-title": "信息登记与匹配",
+                "form-subtitle": "填写您的信息，我们将为您匹配最合适的收购方",
+                "label-producer-name": "姓名",
+                "label-producer-phone": "联系电话",
+                "label-producer-location": "种植地点",
+                "label-producer-crops": "种植品种",
+                "label-producer-quantity": "预计产量",
+                "label-producer-harvest": "预计收获时间",
+                "label-producer-notes": "其他说明",
+                "producer-submit": "提交信息",
+                "tools-back": "返回首页",
+                "tools-title": "中药材识别工具",
+                "tool1-title": "Free Plant Identifier App",
+                "tool1-desc": "基于AI技术的免费植物识别应用。通过上传照片即时识别植物。最精准的植物识别工具。",
+                "tool1-link": "前往识别",
+                "tool2-title": "Pl@ntNet",
+                "tool2-desc": "Pl@ntNet是一个公民科学项目，提供应用程序，通过照片帮助您识别植物。",
+                "tool2-link": "前往识别",
+                "tool3-title": "PictureThis",
+                "tool3-desc": "只需上传照片，即可在线识别花卉、树木、水果、室内植物、观叶植物、草药和蔬菜，提升您的植物知识！",
+                "tool3-link": "前往识别",
+                "tool4-title": "iPlant - FlowerMate 2.0",
+                "tool4-desc": "基于中国植物物种信息系统，利用人工智能识别中国植物。",
+                "tool4-link": "前往识别",
+                "tool5-title": "BaiduAI - EasyDL",
+                "tool5-desc": "通过EasyDL定制图像分类、物体检测模型，自定义识别标签，实现定制植物识别功能。",
+                "tool5-link": "前往定制",
+                "channels-back": "返回首页",
+                "channels-title": "中药材渠道对接",
+                "filter-all": "全部",
+                "filter-large": "大型企业",
+                "filter-local": "本地收购商",
+                "filter-pharmacy": "制药企业",
+                "channel-card-h3": "中药材收购公司对接渠道",
+                "channel-p1": "以下是主要的中药材收购公司及联系方式，供生产者参考对接：",
+                "producer-note": "<strong>温馨提示：</strong>作为中药材生产者，您可以联系以下公司洽谈合作事宜。建议提前准备好样品和相关资质证明。",
+                "company1": "中国中药材集团有限公司",
+                "company1-address": "地址：北京市西城区宣武门外大街甲1号",
+                "company1-phone": "电话：010-12345678",
+                "company1-site": "官网：<a href='https://www.sinopharm.com' target='_blank'>www.sinopharm.com</a>",
+                "company1-products": "主要收购：各类常用中药材",
+                "company1-contact": "对接联系人：采购部张经理",
+                "company2": "同仁堂药材收购中心",
+                "company2-address": "地址：北京市东城区东单北大街4号",
+                "company2-phone": "电话：010-87654321",
+                "company2-site": "官网：<a href='https://www.tongrentang.com' target='_blank'>www.tongrentang.com</a>",
+                "company2-products": "主要收购：高品质道地中药材",
+                "company2-contact": "对接联系人：原料采购部李主任",
+                "company3": "康美药业中药材采购部",
+                "company3-address": "地址：广东省普宁市流沙揭神路东侧",
+                "company3-phone": "电话：0663-2912345",
+                "company3-site": "官网：<a href='https://www.kangmei.com' target='_blank'>www.kangmei.com</a>",
+                "company3-products": "主要收购：大宗中药材、特色药材",
+                "company3-contact": "对接联系人：采购中心王总监",
+                "company4": "宕昌县本地收购点",
+                "company4-address": "地址：甘肃省陇南市宕昌县",
+                "company4-phone": "电话：0939-1234567",
+                "company4-products": "主要收购：当归、黄芪、党参等本地药材",
+                "company4-contact": "对接联系人：王老板",
+                "company5": "甘肃中药材交易中心",
+                "company5-address": "地址：甘肃省兰州市城关区",
+                "company5-phone": "电话：0931-7654321",
+                "company5-site": "官网：<a href='https://www.gszyc.com' target='_blank'>www.gszyc.com</a>",
+                "company5-products": "主要收购：甘肃道地药材、大宗交易",
+                "company5-contact": "对接联系人：交易部刘经理",
+                "footer-copyright": "Copyright © 2025 上海科技大学甘肃陇南社会实践团队"
+            },
+            en: {
+                "header-title": "Chinese Herbal Medicine Identification & Channel Platform",
+                "hero-title": "Bridging Supply and Demand in the Chinese Herbal Medicine Industry",
+                "hero-desc": "Professional identification tools and precise channel matching to boost high-quality development of TCM industry",
+                "hero-button": "Join the Platform Now",
+                "home-h2": "Platform Introduction",
+                "home-p1": "This is a comprehensive service platform designed for Chinese herbal medicine producers. We are committed to solving identification problems and supply-demand connection issues in the Chinese herbal medicine industry, providing convenient and efficient tools and resources for industry participants.",
+                "home-p2": "The platform integrates professional Chinese herbal medicine identification tools to help you quickly and accurately identify various types of Chinese herbal medicines; it also builds a communication bridge between producers and buyers, promoting the circulation and transaction of high-quality Chinese herbal medicines and supporting the development of the traditional Chinese medicine industry.",
+                "option1-h3": "Herbal Medicine Identification",
+                "option1-p": "Provide a variety of professional plant identification tools to help quickly identify Chinese herbal medicine varieties, understand their characteristics and value, and distinguish weeds.",
+                "option1-btn": "Start Identification",
+                "option2-h3": "Channel Connection",
+                "option2-p": "Collect relevant information of Chinese herbal medicine producers in Dangchang County and large-scale Chinese herbal medicine buyers, provide connection channels, promote effective communication and cooperation between supply and demand parties, and achieve win-win development.",
+                "option2-btn": "View Channels",
+                "form-title": "Information Registration & Matching",
+                "form-subtitle": "Fill in your information and we will match you with the most suitable partners",
+                "label-producer-name": "Name",
+                "label-producer-phone": "Phone Number",
+                "label-producer-location": "Planting Location",
+                "label-producer-crops": "Planted Varieties",
+                "label-producer-quantity": "Estimated Yield",
+                "label-producer-harvest": "Estimated Harvest Time",
+                "label-producer-notes": "Additional Notes",
+                "producer-submit": "Submit Information",
+                "tools-back": "Back to Home",
+                "tools-title": "Herbal Medicine Identification Tools",
+                "tool1-title": "Free Plant Identifier App",
+                "tool1-desc": "Free plant identifier app powered by AI technology. Identify plants instantly by uploading photos. The best plant identifier for accurate plant recognition.",
+                "tool1-link": "Go to Identify",
+                "tool2-title": "Pl@ntNet",
+                "tool2-desc": "Pl@ntNet is a citizen science project available as an app that helps you identify plants thanks to your pictures.",
+                "tool2-link": "Go to Identify",
+                "tool3-title": "PictureThis",
+                "tool3-desc": "Simply upload a photo to identify flowers, trees, fruits, houseplants, foliage plants, herbs, and vegetables online, and level up your plant knowledge!",
+                "tool3-link": "Go to Identify",
+                "tool4-title": "iPlant - FlowerMate 2.0",
+                "tool4-desc": "Based on the Chinese Plant Species Information System, using artificial intelligence to identify Chinese plants.",
+                "tool4-link": "Go to Identify",
+                "tool5-title": "BaiduAI - EasyDL",
+                "tool5-desc": "Customize image classification and object detection models through EasyDL, customize recognition labels, and realize customized plant recognition functions.",
+                "tool5-link": "Go to Customize",
+                "channels-back": "Back to Home",
+                "channels-title": "Herbal Medicine Channel Connection",
+                "filter-all": "All",
+                "filter-large": "Large Enterprises",
+                "filter-local": "Local Buyers",
+                "filter-pharmacy": "Pharmaceutical Companies",
+                "channel-card-h3": "Chinese Herbal Medicine Purchasing Company Channels",
+                "channel-p1": "The following are the main Chinese herbal medicine purchasing companies and contact information for producers to reference and connect:",
+                "producer-note": "<strong>Reminder:</strong> As a Chinese herbal medicine producer, you can contact the following companies to discuss cooperation. It is recommended to prepare samples and relevant qualification certificates in advance.",
+                "company1": "China National Traditional Chinese Medicine Corporation",
+                "company1-address": "Address: No. A1, Xuanwumen Outer Street, Xicheng District, Beijing",
+                "company1-phone": "Phone: 010-12345678",
+                "company1-site": "Website: <a href='https://www.sinopharm.com' target='_blank'>www.sinopharm.com</a>",
+                "company1-products": "Mainly Purchases: Various common Chinese herbal medicines",
+                "company1-contact": "Contact Person: Manager Zhang, Purchasing Department",
+                "company2": "Tongrentang Medicine Purchasing Center",
+                "company2-address": "Address: No. 4, Dongdan North Street, Dongcheng District, Beijing",
+                "company2-phone": "Phone: 010-87654321",
+                "company2-site": "Website: <a href='https://www.tongrentang.com' target='_blank'>www.tongrentang.com</a>",
+                "company2-products": "Mainly Purchases: High-quality authentic Chinese herbal medicines",
+                "company2-contact": "Contact Person: Director Li, Raw Material Purchasing Department",
+                "company3": "Kangmei Pharmaceutical Purchasing Department",
+                "company3-address": "Address: East of Jieshen Road, Liusha, Puning City, Guangdong Province",
+                "company3-phone": "Phone: 0663-2912345",
+                "company3-site": "Website: <a href='https://www.kangmei.com' target='_blank'>www.kangmei.com</a>",
+                "company3-products": "Mainly Purchases: Bulk Chinese herbal medicines, characteristic medicines",
+                "company3-contact": "Contact Person: Director Wang, Purchasing Center",
+                "company4": "Dangchang Local Purchase Point",
+                "company4-address": "Address: Dangchang County, Longnan City, Gansu Province",
+                "company4-phone": "Phone: 0939-1234567",
+                "company4-products": "Mainly Purchases: Local herbs such as Angelica, Astragalus, Codonopsis",
+                "company4-contact": "Contact Person: Boss Wang",
+                "company5": "Gansu Chinese Herbal Medicine Trading Center",
+                "company5-address": "Address: Chengguan District, Lanzhou City, Gansu Province",
+                "company5-phone": "Phone: 0931-7654321",
+                "company5-site": "Website: <a href='https://www.gszyc.com' target='_blank'>www.gszyc.com</a>",
+                "company5-products": "Mainly Purchases: Gansu authentic herbs, bulk trading",
+                "company5-contact": "Contact Person: Manager Liu, Trading Department",
+                "footer-copyright": "Copyright © 2025 ShanghaiTech University Gansu Longnan Social Practice Team"
+            }
+        };
+
+        // 语言切换功能
+        function changeLanguage(targetLang) {
+            for (const [elementId, text] of Object.entries(langTexts[targetLang])) {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    if (text.includes('<') && text.includes('>')) {
+                        element.innerHTML = text;
+                    } else {
+                        element.textContent = text;
+                    }
+                }
+            }
+            document.getElementById('lang-switch').textContent = targetLang === 'zh' ? 'En' : '中';
+            localStorage.setItem('currentLang', targetLang);
+        }
+
+        document.getElementById('lang-switch').addEventListener('click', function () {
+            const currentLang = this.textContent === 'En' ? 'zh' : 'en';
+            const targetLang = currentLang === 'zh' ? 'en' : 'zh';
+            changeLanguage(targetLang);
+        });
+
+        // 表单提交功能
+        document.getElementById('producer-form-element').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // 获取表单数据
+            const producerData = {
+                name: document.getElementById('producer-name').value,
+                phone: document.getElementById('producer-phone').value,
+                location: document.getElementById('producer-location').value,
+                crops: document.getElementById('producer-crops').value,
+                quantity: document.getElementById('producer-quantity').value,
+                harvest: document.getElementById('producer-harvest').value
+            };
+
+            // 显示成功消息
+            document.getElementById('producer-success').style.display = 'block';
+
+            // 查找匹配的公司
+            findMatchingCompanies(producerData.crops);
+
+            // 重置表单
+            this.reset();
+
+            // 滚动到匹配结果
+            setTimeout(() => {
+                document.getElementById('match-result').scrollIntoView({ behavior: 'smooth' });
+            }, 500);
+        });
+
+        // 查找匹配的公司
+        function findMatchingCompanies(crops) {
+            // 显示渠道部分
+            showSection('channels');
+
+            // 显示匹配结果区域
+            const matchResult = document.getElementById('match-result');
+            matchResult.style.display = 'block';
+
+            // 清空之前的匹配结果
+            const matchedCompanies = document.getElementById('matched-companies');
+            matchedCompanies.innerHTML = '';
+
+            // 根据作物类型匹配公司
+            const cropList = crops.split(',').map(crop => crop.trim().toLowerCase());
+
+            // 公司数据库（实际应用中应该从服务器获取）
+            const companies = [
+                {
+                    name: "中国中药材集团有限公司",
+                    address: "北京市西城区宣武门外大街甲1号",
+                    phone: "010-12345678",
+                    site: "https://www.sinopharm.com",
+                    products: "各类常用中药材",
+                    contact: "采购部张经理",
+                    specialties: ["当归", "黄芪", "党参", "甘草", "枸杞"]
+                },
+                {
+                    name: "同仁堂药材收购中心",
+                    address: "北京市东城区东单北大街4号",
+                    phone: "010-87654321",
+                    site: "https://www.tongrentang.com",
+                    products: "高品质道地中药材",
+                    contact: "原料采购部李主任",
+                    specialties: ["人参", "鹿茸", "灵芝", "冬虫夏草", "藏红花"]
+                },
+                {
+                    name: "康美药业中药材采购部",
+                    address: "广东省普宁市流沙揭神路东侧",
+                    phone: "0663-2912345",
+                    site: "https://www.kangmei.com",
+                    products: "大宗中药材、特色药材",
+                    contact: "采购中心王总监",
+                    specialties: ["三七", "天麻", "茯苓", "白术", "川芎"]
+                },
+                {
+                    name: "宕昌县本地收购点",
+                    address: "甘肃省陇南市宕昌县",
+                    phone: "0939-1234567",
+                    products: "当归、黄芪、党参等本地药材",
+                    contact: "王老板",
+                    specialties: ["当归", "黄芪", "党参", "大黄", "红芪"]
+                },
+                {
+                    name: "甘肃中药材交易中心",
+                    address: "甘肃省兰州市城关区",
+                    phone: "0931-7654321",
+                    site: "https://www.gszyc.com",
+                    products: "甘肃道地药材、大宗交易",
+                    contact: "交易部刘经理",
+                    specialties: ["当归", "黄芪", "党参", "甘草", "大黄"]
+                }
+            ];
+
+            // 计算匹配度并排序
+            const matched = companies.map(company => {
+                let score = 0;
+                cropList.forEach(crop => {
+                    if (company.specialties.includes(crop)) {
+                        score += 2; // 主要特产加分更多
+                    } else if (company.products.toLowerCase().includes(crop)) {
+                        score += 1; // 一般产品加分较少
+                    }
+                });
+                return { ...company, score };
+            }).filter(company => company.score > 0)
+                .sort((a, b) => b.score - a.score);
+
+            // 显示匹配结果
+            if (matched.length > 0) {
+                matched.forEach(company => {
+                    const companyEl = document.createElement('div');
+                    companyEl.className = 'match-company';
+                    companyEl.innerHTML = `
+                        <span class="match-score">匹配度: ${company.score}</span>
+                        <h4>${company.name}</h4>
+                        <p><i class="fas fa-map-marker-alt"></i> ${company.address}</p>
+                        <p><i class="fas fa-phone"></i> ${company.phone}</p>
+                        <p><i class="fas fa-box"></i> ${company.products}</p>
+                        <p><i class="fas fa-user"></i> ${company.contact}</p>
+                    `;
+                    matchedCompanies.appendChild(companyEl);
+                });
+            } else {
+                matchedCompanies.innerHTML = '<p>暂未找到完全匹配的公司，请查看下方完整公司列表。</p>';
+            }
+        }
+
+        // 渠道筛选功能
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // 移除所有按钮的激活状态
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // 添加当前按钮的激活状态
+                button.classList.add('active');
+
+                const filter = button.getAttribute('data-filter');
+                // 这里可以根据需要添加实际筛选逻辑
+                console.log('筛选条件: ' + filter);
+            });
+        });
+
+        // 页面切换功能
+        function showSection(sectionId) {
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('tools').style.display = 'none';
+            document.getElementById('channels').style.display = 'none';
+            document.getElementById(sectionId).style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        // 页面加载初始化
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('tools').style.display = 'none';
+            document.getElementById('channels').style.display = 'none';
+            const savedLang = localStorage.getItem('currentLang') || 'zh';
+            changeLanguage(savedLang);
+        });
+    </script>
+</body>
+
+</html>
